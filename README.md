@@ -3,6 +3,8 @@
 > Penguin CLI is a command line interface tool for testing and debugging API's.<br>
 > It's an alternative to Postman and Rest Client in VSCode, etc.
 
+<img src="./img/penguin-cli-main-menu.png" />
+
 ### Features
 
 - Send HTTP requests with ease
