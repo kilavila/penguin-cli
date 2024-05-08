@@ -42,107 +42,137 @@ class SelectedRequest {
 	}
 
 	async edit(request) {
-		this.ui.setTitle(`Selected request: ${request.name}`);
-		console.log(request);
-		this.ui.setFooter();
+		let selectedValue = null;
 
-		let edited = true;
-		let editedRequest = request;
+		while (selectedValue !== 'Save changes' || selectedValue !== 'Go back') {
+			this.ui.setTitle(`Selected request: ${request.name}`);
+			console.log(request);
+			this.ui.setFooter();
 
-		let selectedValue = await select({
-			type: 'multiselect',
-			loop: false,
-			message: `Select a value to edit:`,
-			choices: [
-				{
-					value: 'Name',
-					description: 'Edit the name of this request',
-				},
-				{
-					value: 'Method',
-					description: 'Edit the method of this request',
-				},
-				{
-					value: 'URL',
-					description: 'Edit the URL of this request',
-				},
-				{
-					value: 'Content-Type',
-					description: 'Edit the content-type of this request',
-				},
-				{
-					value: 'Headers',
-					description: 'Edit the headers of this request',
-				},
-				{
-					value: 'Body',
-					description: 'Edit the body of this request',
-				},
-				new Separator(),
-				{
-					value: 'Go back',
-					description: 'Return to previous menu',
-				},
-			],
-		});
-
-		if (selectedValue === 'Name') {
-			request.name = await input({
-				message: chalk.yellow('Give the request an identifiable name:'),
-				default: request.name,
+			selectedValue = await select({
+				type: 'multiselect',
+				loop: false,
+				message: `Select a value to edit:`,
+				choices: [
+					{
+						value: 'Save changes',
+						description: 'Save changes and return to previous menu',
+					},
+					new Separator(),
+					{
+						value: 'Name',
+						description: 'Edit the name of this request',
+					},
+					{
+						value: 'Method',
+						description: 'Edit the method of this request',
+					},
+					{
+						value: 'URL',
+						description: 'Edit the URL of this request',
+					},
+					{
+						value: 'Content-Type',
+						description: 'Edit the content-type of this request',
+					},
+					{
+						value: 'Headers',
+						description: 'Edit the headers of this request',
+					},
+					{
+						value: 'Body',
+						description: 'Edit the body of this request',
+					},
+					new Separator(),
+					{
+						value: 'Go back',
+						description: 'Return to previous menu',
+					},
+				],
 			});
+
+			if (selectedValue === 'Name') {
+				request.name = await input({
+					message: chalk.yellow('Give the request an identifiable name:'),
+					default: request.name,
+				});
+			} else if (selectedValue === 'Method') {
+				request.method = await input({
+					message: chalk.yellow('Select a method:'),
+					default: request.method,
+				});
+			} else if (selectedValue === 'URL') {
+				request.url = await input({
+					message: chalk.yellow('Enter API URL:'),
+					default: request.url,
+				});
+			} else if (selectedValue === 'Content-Type') {
+				request.contentType = await input({
+					message: chalk.yellow('Select Content-Type:'),
+					default: request.contentType,
+				});
+			} else if (selectedValue === 'Headers') {
+				request.headers = await editor({
+					message: chalk.yellow('Enter request headers:'),
+					default: request.headers,
+				});
+			} else if (selectedValue === 'Body') {
+				request.body = await editor({
+					message: chalk.yellow('Enter request body:'),
+					default: request.body,
+				});
+			} else if (selectedValue === 'Save changes') {
+				return { edited: true, editedRequest: request };
+			} else {
+				return { edited: false, editedRequest: null };
+			}
 		}
-
-		return { edited, editedRequest };
-
-		// TODO: Select which values to edit then save when finished
-		// FIX: Not working when editing, returns [object object]
-		// const body = await editor({
-		// 	message: 'Edit the request',
-		// 	default: `${request.body}`
-		// });
 	}
 
 	async options(request) {
-		this.ui.setTitle(`Selected request: ${request.name}`);
-		console.log(request);
-		this.ui.setFooter();
+		let action = null;
 
-		const action = await select({
-			type: 'multiselect',
-			loop: false,
-			message: 'Request action:',
-			choices: [
-				{
-					value: 'Run',
-					description: 'Run this HTTP request',
-				},
-				{
-					value: 'Edit',
-					description: 'Edit this HTTP request',
-				},
-				{
-					value: 'Delete',
-					description: 'Delete this HTTP request',
-				},
-				new Separator(),
-				{
-					value: 'Go back',
-					description: 'Return to previous menu',
-				},
-			],
-		});
+		while (action !== 'Go back') {
+			this.ui.setTitle(`Selected request: ${request.name}`);
+			console.log(request);
+			this.ui.setFooter();
 
-		if (action === 'Run') {
-			this.run(request);
-		} else if (action === 'Edit') {
-			const { edited, editedRequest } = await this.edit(request);
+			action = await select({
+				type: 'multiselect',
+				loop: false,
+				message: 'Request action:',
+				choices: [
+					{
+						value: 'Run',
+						description: 'Run this HTTP request',
+					},
+					{
+						value: 'Edit',
+						description: 'Edit this HTTP request',
+					},
+					{
+						value: 'Delete',
+						description: 'Delete this HTTP request',
+					},
+					new Separator(),
+					{
+						value: 'Go back',
+						description: 'Return to previous menu',
+					},
+				],
+			});
 
-			if (edited) {
-				await this.state.editRequest(request.id, editedRequest);
+			if (action === 'Run') {
+				this.run(request);
+			} else if (action === 'Edit') {
+				const result = await this.edit(request);
+
+				if (result.edited && result.editedRequest) {
+					await this.state.editRequest(request.id, result.editedRequest);
+				}
+			} else if (action === 'Delete') {
+				this.state.deleteRequest(request.id);
 			}
-		} else if (action === 'Delete') {
-			this.state.deleteRequest(request.id);
 		}
 	}
 
