@@ -31,7 +31,7 @@ class UI {
 
 	setTitle(text) {
 		const title = `│
-│ ${text}
+│ ${chalk.yellowBright(text)}
 └─────────────────────────────────────────────────┐
 
 		`;

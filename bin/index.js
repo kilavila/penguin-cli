@@ -3,7 +3,6 @@
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import ora from 'ora';
-import chalk from 'chalk';
 import {
 	input,
 	confirm,
@@ -14,6 +13,7 @@ import {
 import State from './state.js';
 import SelectedRequest from './selected.js';
 import UI from './ui.js';
+import chalk from 'chalk';
 
 const ui = new UI();
 const state = new State(ui);
@@ -45,7 +45,7 @@ const mainMenu = async () => {
 		type: 'multiselect',
 		loop: false,
 		name: 'Main menu',
-		message: 'MENU',
+		message: chalk.yellow('Menu selection:'),
 		choices: menuItems,
 	});
 
@@ -63,7 +63,6 @@ const mainMenu = async () => {
 
 	if (selected) {
 		const request = state.getSelected(selected);
-		ui.setTitle(`Selected request: ${request.name}`);
 		await selectedRequest.options(request);
 
 		return false;

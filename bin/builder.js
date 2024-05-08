@@ -6,6 +6,7 @@ import {
 	select,
 	Separator
 } from '@inquirer/prompts';
+import chalk from 'chalk';
 import { init } from '@paralleldrive/cuid2';
 
 class Builder {
@@ -21,12 +22,12 @@ class Builder {
 	async newRequest() {
 		const id = this.generateId();
 
-		const name = await input({ message: 'Give the request a identifiable name' });
+		const name = await input({ message: chalk.yellow('Give the request an identifiable name:') });
 
 		const method = await select({
 			type: 'multiselect',
 			loop: false,
-			message: 'Select a method',
+			message: chalk.yellow('Select a method:'),
 			choices: [
 				{ value: 'GET' },
 				{ value: 'POST' },
@@ -35,12 +36,12 @@ class Builder {
 			],
 		});
 
-		const url = await input({ message: 'Enter API URL' });
+		const url = await input({ message: chalk.yellow('Enter API URL:') });
 
 		let contentType = await select({
 			type: 'multiselect',
 			loop: false,
-			message: 'Select Content-Type',
+			message: chalk.yellow('Select Content-Type:'),
 			choices: [
 				{ value: 'application/json' },
 				{ value: 'text/html' },
@@ -53,7 +54,7 @@ class Builder {
 			contentType = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Select Content-Type',
+				message: chalk.yellow('Select Content-Type:'),
 				choices: [
 					{ value: 'application/json' },
 					{ value: 'text/html' },
@@ -83,34 +84,31 @@ class Builder {
 		}
 
 		const addHeaders = await confirm({
-			message: 'Add request headers?',
-			default: false,
+			message: chalk.yellow('Add request headers?'),
 		});
 		let headers = null;
 		if (addHeaders) {
 			headers = await editor({
-				message: 'Enter request headers',
+				message: chalk.yellow('Enter request headers:'),
 				postfix: 'json',
 				default: `{
-					"Authorization": "This field will be added automatically for you if make a login request",
-					"Content-Type": "Your selected content type will also be added automatically",
-				}`,
+	"Authorization": "This field will be added automatically for you if make a login request",
+	"Content-Type": "Your selected content type will also be added automatically",
+}`,
 			});
 		}
 
 		const addBody = await confirm({
-			message: 'Add request body?',
-			default: false,
+			message: chalk.yellow('Add request body?'),
 		});
 		let body = null;
 		if (addBody) {
 			body = await editor({
-				message: 'Enter request body',
-				postfix: contentType.split('/')[1],
+				message: chalk.yellow('Enter request body:'),
+				postfix: 'json',
 				default: `{
-					"email": "my-email@test.com",
-					"password": "my-password"
-				}`,
+	"title": "testing"
+}`,
 			});
 		}
 
@@ -130,12 +128,3 @@ class Builder {
 }
 
 export default Builder;
-
-// const req = {
-// 	url: 'https://api.com/endpoint',	// required
-// 	method: 'GET',						// required
-// 	cache: "only-if-cached",			// optional
-// 	mode: 'same-origin',				// optional
-// 	headers: [],						// optional
-// 	body: []							// optional
-// }

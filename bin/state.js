@@ -15,8 +15,6 @@ class State {
 			accessToken: null,
 			requests: [],
 		};
-
-		this.idRegex = /^[^[]*\[(\w+)\].*$/g;
 	}
 
 	async save() {
@@ -32,7 +30,7 @@ class State {
 
 			data.requests.map(req => {
 				const item = {
-					value: `id: [${req.id}] -> ${req.name}`,
+					value: `${req.id} | ${req.name}`,
 					description: `${req.method} ${req.url}`,
 				};
 				menuItems.push(item);
@@ -56,6 +54,14 @@ class State {
 		}
 	}
 
+	async editRequest(id, editedRequest) {
+		let index = this.data.requests.findIndex(req => req.id === id);
+		if (index !== -1) {
+			this.data.requests.splice(index, 1, editedRequest);
+			this.save();
+		}
+	}
+
 	async deleteRequest(id) {
 		const index = this.data.requests.findIndex(req => req.id === id);
 		if (index !== -1) {
@@ -64,9 +70,9 @@ class State {
 		}
 	}
 
-	getSelected(name) {
-		const id = this.idRegex.exec(name);
-		const request = this.data.requests.find(req => req.id === id[1]);
+	getSelected(selectedItem) {
+		const id = selectedItem.split(' | ');
+		const request = this.data.requests.find(req => req.id === id[0]);
 		return request;
 	}
 
