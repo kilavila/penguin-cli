@@ -20,25 +20,19 @@ class SelectedRequest {
 		reqHeaders.append('Content-Type', request.contentType);
 		reqHeaders.append('Authorization', `Bearer ${this.state.data.accessToken}`)
 
-		console.log(request.body);
-
 		let response = await fetch(request.url, {
 			method: request.method,
 			headers: reqHeaders,
 			body: request.body,
 		});
-
 		this.ui.setTitle(`Response from: ${request.url}`);
 		console.log(response);
 		this.ui.setFooter();
 
-		if (response) {
-			response = await response.json();
-			this.ui.setTitle(`Response JSON`);
-			console.log(response);
-			this.ui.setFooter();
-
-		}
+		response = await response.json();
+		this.ui.setTitle(`Response JSON`);
+		console.log(response);
+		this.ui.setFooter();
 	}
 
 	async edit(request) {
@@ -56,37 +50,37 @@ class SelectedRequest {
 				choices: [
 					{
 						value: 'Save changes',
-						description: 'Save changes and return to previous menu',
+						description: this.ui.dim('\nSave changes and return to previous menu'),
 					},
 					new Separator(),
 					{
 						value: 'Name',
-						description: 'Edit the name of this request',
+						description: this.ui.dim('\nEdit the name of this request'),
 					},
 					{
 						value: 'Method',
-						description: 'Edit the method of this request',
+						description: this.ui.dim('\nEdit the method of this request'),
 					},
 					{
 						value: 'URL',
-						description: 'Edit the URL of this request',
+						description: this.ui.dim('\nEdit the URL of this request'),
 					},
 					{
 						value: 'Content-Type',
-						description: 'Edit the content-type of this request',
+						description: this.ui.dim('\nEdit the content-type of this request'),
 					},
 					{
 						value: 'Headers',
-						description: 'Edit the headers of this request',
+						description: this.ui.dim('\nEdit the headers of this request'),
 					},
 					{
 						value: 'Body',
-						description: 'Edit the body of this request',
+						description: this.ui.dim('\nEdit the body of this request'),
 					},
 					new Separator(),
 					{
 						value: 'Go back',
-						description: 'Return to previous menu',
+						description: this.ui.dim('\nReturn to previous menu'),
 					},
 				],
 			});
@@ -131,8 +125,9 @@ class SelectedRequest {
 
 	async options(request) {
 		let action = null;
+		const deleteReq = chalk.red('Delete');
 
-		while (action !== 'Go back') {
+		while (action !== 'Delete' || action !== 'Go back') {
 			this.ui.setTitle(`Selected request: ${request.name}`);
 			console.log(request);
 			this.ui.setFooter();
@@ -144,36 +139,42 @@ class SelectedRequest {
 				choices: [
 					{
 						value: 'Run',
-						description: 'Run this HTTP request',
+						description: this.ui.dim('\nRun this HTTP request'),
 					},
 					{
 						value: 'Edit',
-						description: 'Edit this HTTP request',
+						description: this.ui.dim('\nEdit this HTTP request'),
 					},
 					{
-						value: 'Delete',
-						description: 'Delete this HTTP request',
+						value: deleteReq,
+						description: this.ui.dim('\nDelete this HTTP request'),
 					},
 					new Separator(),
 					{
 						value: 'Go back',
-						description: 'Return to previous menu',
+						description: this.ui.dim('\nReturn to previous menu'),
 					},
 				],
 			});
 
 			if (action === 'Run') {
-				this.run(request);
+				await this.run(request);
 			} else if (action === 'Edit') {
 				const result = await this.edit(request);
 
 				if (result.edited && result.editedRequest) {
 					await this.state.editRequest(request.id, result.editedRequest);
 				}
-			} else if (action === 'Delete') {
-				this.state.deleteRequest(request.id);
+			} else if (action === deleteReq) {
+				await this.state.deleteRequest(request.id);
+				return;
+			} else {
+				action = 'Go back';
+				return;
 			}
 		}
+
+		return;
 	}
 
 }

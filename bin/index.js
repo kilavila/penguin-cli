@@ -23,33 +23,44 @@ const selectedRequest = new SelectedRequest(state, ui);
 
 ui.printBgMagenta(ui.welcomeBanner);
 
+// FIX: ?? Create collections/projects?
+// Automatic testing?
+
 const mainMenu = async () => {
 	const menuItems = state.init();
-	menuItems.unshift(new Separator());
+	const quit = chalk.red('Quit');
+
+	// menuItems.unshift(new Separator(chalk.gray('---   REQUESTS   ---')));
+	menuItems.unshift(new Separator(chalk.gray('--------------------------------------------------')));
 	menuItems.unshift({
-		value: 'Quit',
-		description: 'Exit Penguin CLI'
+		value: quit,
+		description: ui.dim('\nExit Penguin CLI')
 	});
 	menuItems.unshift({
-		value: 'View saved data',
-		description: 'Print your saved data'
+		value: 'Settings',
+		description: ui.dim('\nEnter Penguin CLI settings')
 	});
+	// TODO: Move to settings
+	// menuItems.unshift({
+	// 	value: 'View saved data',
+	// 	description: 'Print your saved data'
+	// });
 	menuItems.unshift({
 		value: 'New request',
-		description: 'Build a new HTTP request'
+		description: ui.dim('\nBuild a new HTTP request')
 	});
-	menuItems.unshift(new Separator());
-	menuItems.push(new Separator());
+	// menuItems.unshift(new Separator(chalk.gray('____________________')));
+	// menuItems.push(new Separator(chalk.gray('____________________')));
 
 	const selected = await select({
 		type: 'multiselect',
 		loop: false,
 		name: 'Main menu',
-		message: chalk.yellow('Menu selection:'),
+		message: chalk.yellow('Menu:'),
 		choices: menuItems,
 	});
 
-	if (selected === 'New request') {
+	if (selected === 'New request' || selected === 'No requests found! Create a new request') {
 		await state.createNewRequest();
 		return false;
 	} else if (selected === 'View saved data') {
@@ -57,7 +68,7 @@ const mainMenu = async () => {
 		console.log(state.data);
 		ui.setFooter();
 		return false;
-	} else if (selected === 'Quit') {
+	} else if (selected === quit) {
 		return true;
 	}
 

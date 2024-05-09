@@ -9,11 +9,50 @@ class State {
 		this.ui = ui;
 
 		this.data = {
-			options: {
-				viewResultInEditor: false,
-			},
-			accessToken: null,
 			requests: [],
+			settings: {
+				global: {
+					confirmOnDelete: false,
+					confirmOnExit: false,
+					confirmUnsavedChanges: false,
+				},
+				accessToken: {
+					autoSaveFromRequest: true,
+					autoAddInRequest: true,
+					clearOnExit: false,
+					value: "",
+				},
+				body: {
+					defaultValue: "",
+					skipInCreate: false,
+				},
+				contentType: {
+					defaultValue: "",
+					skipInCreate: false,
+				},
+				endpoint: {
+					autoSaveFromRequest: true,
+					skipListInCreate: false,
+					list: [],
+				},
+				header: {
+					defaultValue: "",
+					skipInCreate: false,
+				},
+				name: {
+					autoGenerate: false,
+					skipInCreate: false,
+				},
+				response: {
+					viewInEditor: false,
+					requireKeypressOnPrint: false,
+				},
+				url: {
+					autoSaveFromRequest: true,
+					skipListInCreate: false,
+					list: [],
+				},
+			},
 		};
 	}
 
@@ -31,7 +70,7 @@ class State {
 			data.requests.map(req => {
 				const item = {
 					value: `${req.id} | ${req.name}`,
-					description: `${req.method} ${req.url}`,
+					description: this.ui.dim(`\n${req.method} ${req.url}`),
 				};
 				menuItems.push(item);
 			});
@@ -39,8 +78,8 @@ class State {
 			return menuItems;
 		} else {
 			return [{
-				value: 'No HTTP requests found',
-				disabled: true,
+				value: 'No requests found! Create a new request',
+				description: this.ui.dim('\nBuild a new HTTP request')
 			}];
 		}
 	}

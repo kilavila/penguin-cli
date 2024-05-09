@@ -17,6 +17,10 @@ class UI {
 `;
 	}
 
+	dim(text) {
+		return chalk.dim(chalk.blue(text));
+	}
+
 	printBgMagenta(text) {
 		console.log(
 			chalk.bgMagenta(
