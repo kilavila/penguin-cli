@@ -16,42 +16,44 @@ class SelectedRequest {
 		this.ui = ui;
 	}
 
-	async run(request) {
+	async run(req) {
 		const loading = ora('Fetching data').start();
 		loading.color = 'yellow';
 
-		const reqHeaders = new Headers(request.headers ? request.headers : {});
-		reqHeaders.append('Content-Type', request.contentType);
-		reqHeaders.append('Authorization', `Bearer ${this.state.data.accessToken}`)
+		const headers = new Headers(req.headers ? req.headers : {});
+		headers.append('Content-Type', req.contentType);
+		headers.append('Authorization', `Bearer ${this.state.data.accessToken}`)
 
-		let response = await fetch(request.url, {
-			method: request.method,
-			headers: reqHeaders,
-			body: request.body,
+		let res = await fetch(req.url, {
+			method: req.method,
+			headers: headers,
+			body: req.body,
 		});
 
-		await new Promise(resolve => {
-			setTimeout(async () => {
-				loading.text = 'Parsing data';
+		let data = await res.json();
+		loading.succeed('Printing response');
 
-				let data = await response.json();
+		this.ui.setTitle(
+			chalk.yellow(res.status) + ': ' +
+			chalk.green(res.statusText) +
+			chalk.blue(' (' +
+				req.method + ' ' +
+				req.url + ')'
+			)
+		);
+		console.log(res);
 
-				setTimeout(() => {
-					loading.color = 'green';
-					loading.succeed('Printing response');
+		if (this.state.data.settings.response.viewInEditor) {
+			await editor({
+				message: chalk.yellow('View response in default editor:'),
+				postfix: '.json',
+				default: JSON.stringify(data),
+			});
+		} else {
+			console.log(data);
+		}
 
-					this.ui.setTitle(`Response from: ${request.url}`);
-					console.log(response);
-					this.ui.setFooter();
-
-					this.ui.setTitle(`Response JSON`);
-					console.log(data);
-					this.ui.setFooter();
-
-					resolve(true);
-				}, 500);
-			}, 500);
-		});
+		this.ui.setFooter();
 	}
 
 	async edit(request) {

@@ -12,8 +12,6 @@ class Settings {
 	constructor(state, ui) {
 		this.state = state;
 		this.ui = ui;
-
-		this.opt = this.state.data.settings;
 	}
 
 	async globalSettings() {
@@ -22,19 +20,19 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Global settings',
+				message: chalk.yellow('Global settings'),
 				choices: [
 					{	// INFO: Boolean
 						value: 'Confirm on delete',
-						description: this.ui.dim(`\n${this.opt.global.confirmOnDelete}\nGet confirmation before deleting anything`),
+						description: this.ui.dim(`\n${this.state.data.settings.global.confirmOnDelete}\nGet confirmation before deleting anything`),
 					},
 					{	// INFO: Boolean
 						value: 'Confirm on exit',
-						description: this.ui.dim(`\n${this.opt.global.confirmOnExit}\nGet confirmation before exiting Penguin CLI`),
+						description: this.ui.dim(`\n${this.state.data.settings.global.confirmOnExit}\nGet confirmation before exiting Penguin CLI`),
 					},
 					{	// INFO: Boolean
 						value: 'Confirm unsaved changes',
-						description: this.ui.dim(`\n${this.opt.global.confirmUnsavedChanges}\nGet confirmation when leaving a menu without saving changes`),
+						description: this.ui.dim(`\n${this.state.data.settings.global.confirmUnsavedChanges}\nGet confirmation when leaving a menu without saving changes`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -57,23 +55,23 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Token settings',
+				message: chalk.yellow('Token settings'),
 				choices: [
 					{	// INFO: Boolean
 						value: 'Auto save from request',
-						description: this.ui.dim(`\n${this.opt.accessToken.autoSaveFromRequest}\nAutomatically extract and save access token from login requests`),
+						description: this.ui.dim(`\n${this.state.data.settings.accessToken.autoSaveFromRequest}\nAutomatically extract and save access token from login requests`),
 					},
 					{	// INFO: Boolean
 						value: 'Auto add in request',
-						description: this.ui.dim(`\n${this.opt.accessToken.autoAddInRequest}\nAutomatically add access token in headers on all requests`),
+						description: this.ui.dim(`\n${this.state.data.settings.accessToken.autoAddInRequest}\nAutomatically add access token in headers on all requests`),
 					},
 					{	// INFO: Boolean
 						value: 'Clear on exit',
-						description: this.ui.dim(`\n${this.opt.accessToken.clearOnExit}\nAutomatically remove access token when exiting Penguin CLI`),
+						description: this.ui.dim(`\n${this.state.data.settings.accessToken.clearOnExit}\nAutomatically remove access token when exiting Penguin CLI`),
 					},
 					{	// INFO: String
 						value: 'Value',
-						description: this.ui.dim(`\n${this.opt.accessToken.value}\nView/edit the access token`),
+						description: this.ui.dim(`\n${this.state.data.settings.accessToken.value}\nView/edit the access token`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -95,15 +93,15 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Body settings',
+				message: chalk.yellow('Body settings'),
 				choices: [
 					{	// INFO: String
 						value: 'Default value',
-						description: this.ui.dim(`\n${this.opt.body.defaultValue}\nThe default value when making a new request`),
+						description: this.ui.dim(`\n${this.state.data.settings.body.defaultValue}\nThe default value when making a new request`),
 					},
 					{	// INFO: Boolean
 						value: 'Skip in create',
-						description: this.ui.dim(`\n${this.opt.body.skipInCreate}\nDon't ask to add body, always add default`),
+						description: this.ui.dim(`\n${this.state.data.settings.body.skipInCreate}\nDon't ask to add body, always add default`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -125,15 +123,15 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Content-Type settings',
+				message: chalk.yellow('Content-Type settings'),
 				choices: [
 					{	// INFO: String
 						value: 'Default value',
-						description: this.ui.dim(`\n${this.opt.contentType.defaultValue}\nThe default value when making a new request`),
+						description: this.ui.dim(`\n${this.state.data.settings.contentType.defaultValue}\nThe default value when making a new request`),
 					},
 					{	// INFO: Boolean
 						value: 'Skip in create',
-						description: this.ui.dim(`\n${this.opt.contentType.skipInCreate}\nDon't ask to add content type, always add default`),
+						description: this.ui.dim(`\n${this.state.data.settings.contentType.skipInCreate}\nDon't ask to add content type, always add default`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -155,19 +153,19 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Endpoint settings',
+				message: chalk.yellow('Endpoint settings'),
 				choices: [
 					{	// INFO: Boolean
 						value: 'Auto save from request',
-						description: this.ui.dim(`\n${this.opt.endpoint.autoSaveFromRequest}\nAutomatically extract and save endpoints from requests`),
+						description: this.ui.dim(`\n${this.state.data.settings.endpoint.autoSaveFromRequest}\nAutomatically extract and save endpoints from requests`),
 					},
 					{	// INFO: Boolean
 						value: 'Skip list in create',
-						description: this.ui.dim(`\n${this.opt.endpoint.skipListInCreate}\nDon't show list of saved endpoints when making new request`),
+						description: this.ui.dim(`\n${this.state.data.settings.endpoint.skipListInCreate}\nDon't show list of saved endpoints when making new request`),
 					},
 					{	// INFO: Array<String>
 						value: 'List',
-						description: this.ui.dim(`\n${this.opt.endpoint.list}\nView/edit list of saved endpoints`),
+						description: this.ui.dim(`\n${this.state.data.settings.endpoint.list}\nView/edit list of saved endpoints`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -189,15 +187,15 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Header settings',
+				message: chalk.yellow('Header settings'),
 				choices: [
 					{	// INFO: String
 						value: 'Default value',
-						description: this.ui.dim(`\n${this.opt.header.defaultValue}\nThe default value when making a new request`),
+						description: this.ui.dim(`\n${this.state.data.settings.header.defaultValue}\nThe default value when making a new request`),
 					},
 					{	// INFO: Boolean
 						value: 'Skip in create',
-						description: this.ui.dim(`\n${this.opt.header.skipInCreate}\nDon't ask to add headers, always add default`),
+						description: this.ui.dim(`\n${this.state.data.settings.header.skipInCreate}\nDon't ask to add headers, always add default`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -219,15 +217,15 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Name settings',
+				message: chalk.yellow('Name settings'),
 				choices: [
 					{	// INFO: Boolean
 						value: 'Auto generate',
-						description: this.ui.dim(`\n${this.opt.name.autoGenerate}\nAutomatically generate name from data in request`),
+						description: this.ui.dim(`\n${this.state.data.settings.name.autoGenerate}\nAutomatically generate name from data in request`),
 					},
 					{	// INFO: Boolean
 						value: 'Skip in create',
-						description: this.ui.dim(`\n${this.opt.name.skipInCreate}\nDon't ask to add name when making new request`),
+						description: this.ui.dim(`\n${this.state.data.settings.name.skipInCreate}\nDon't ask to add name when making new request`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -249,15 +247,15 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Response settings',
+				message: chalk.yellow('Response settings'),
 				choices: [
 					{	// INFO: Boolean
 						value: 'View in editor',
-						description: this.ui.dim(`\n${this.opt.response.viewInEditor}\nView response in default editor`),
+						description: this.ui.dim(`\n${this.state.data.settings.response.viewInEditor}\nView response in default editor`),
 					},
 					{	// INFO: Boolean
 						value: 'Require keypress on print',
-						description: this.ui.dim(`\n${this.opt.response.requireKeypressOnPrint}\nRequire keypress between each table of data printed`),
+						description: this.ui.dim(`\n${this.state.data.settings.response.requireKeypressOnPrint}\nRequire keypress between each table of data printed`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -270,6 +268,11 @@ class Settings {
 					},
 				],
 			});
+
+			if (selection === 'View in editor') {
+				this.state.data.settings.response.viewInEditor = !this.state.data.settings.response.viewInEditor;
+				await this.state.save();
+			}
 		}
 	}
 
@@ -279,19 +282,19 @@ class Settings {
 			selection = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'URL settings',
+				message: chalk.yellow('URL settings'),
 				choices: [
 					{	// INFO: Boolean
 						value: 'Auto save from request',
-						description: this.ui.dim(`\n${this.opt.endpoint.autoSaveFromRequest}\nAutomatically extract and save URL's from requests`),
+						description: this.ui.dim(`\n${this.state.data.settings.endpoint.autoSaveFromRequest}\nAutomatically extract and save URL's from requests`),
 					},
 					{	// INFO: Boolean
 						value: 'Skip list in create',
-						description: this.ui.dim(`\n${this.opt.endpoint.skipListInCreate}\nDon't show list of saved URL's when making new request`),
+						description: this.ui.dim(`\n${this.state.data.settings.endpoint.skipListInCreate}\nDon't show list of saved URL's when making new request`),
 					},
 					{	// INFO: Array<String>
 						value: 'List',
-						description: this.ui.dim(`\n${this.opt.endpoint.list}\nView/edit list of saved URL's`),
+						description: this.ui.dim(`\n${this.state.data.settings.endpoint.list}\nView/edit list of saved URL's`),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
 					{
@@ -313,42 +316,42 @@ class Settings {
 			action = await select({
 				type: 'multiselect',
 				loop: false,
-				message: 'Settings',
+				message: chalk.yellow('Settings'),
 				choices: [
 					{
-						value: 'Global settings',
+						value: 'Global',
 						description: this.ui.dim('Penguin CLI global settings'),
 					},
 					{
-						value: 'Token settings',
+						value: 'Token',
 						description: this.ui.dim('Access token settings'),
 					},
 					{
-						value: 'Body settings',
+						value: 'Body',
 						description: this.ui.dim('Request body settings'),
 					},
 					{
-						value: 'Content-Type settings',
+						value: 'Content-Type',
 						description: this.ui.dim('Content-Type settings'),
 					},
 					{
-						value: 'Endpoint settings',
+						value: 'Endpoint',
 						description: this.ui.dim('API endpoint settings'),
 					},
 					{
-						value: 'Header settings',
+						value: 'Header',
 						description: this.ui.dim('Request headers settings'),
 					},
 					{
-						value: 'Name settings',
+						value: 'Name',
 						description: this.ui.dim('Request name/identifier settings'),
 					},
 					{
-						value: 'Response settings',
+						value: 'Response',
 						description: this.ui.dim('Fetch response settings'),
 					},
 					{
-						value: 'URL settings',
+						value: 'URL',
 						description: this.ui.dim('API URL settings'),
 					},
 					new Separator(chalk.gray('--------------------------------------------------')),
@@ -363,9 +366,27 @@ class Settings {
 				],
 			}); // await select
 
-			if (action === 'Save changes') {
+			if (action === 'Global') {
+				await this.globalSettings();
+			} else if (action === 'Token') {
+				await this.tokenSettings();
+			} else if (action === 'Body') {
+				await this.bodySettings();
+			} else if (action === 'Content-Type') {
+				await this.contentTypeSettings();
+			} else if (action === 'Endpoint') {
+				await this.endpointSettings();
+			} else if (action === 'Header') {
+				await this.headerSettings();
+			} else if (action === 'Name') {
+				await this.nameSettings();
+			} else if (action === 'Response') {
+				await this.responseSettings();
+			} else if (action === 'URL') {
+				await this.urlSettings();
+			} else if (action === 'Save changes') {
+				// FIX: Save changes!
 				// TODO: Save changes!
-				action = 'Go back';
 				return;
 			} else if (action === 'Go back') {
 				return;
@@ -378,48 +399,3 @@ class Settings {
 }
 
 export default Settings;
-
-// INFO:
-// settings: {
-// 	global: {
-// 		confirmOnDelete: false,
-// 		confirmOnExit: false,
-// 		confirmUnsavedChanges: false,
-// 	},
-// 	accessToken: {
-// 		autoSaveFromRequest: true,
-// 		autoAddInRequest: true,
-// 		clearOnExit: false,
-// 		value: "",
-// 	},
-// 	body: {
-// 		defaultValue: "",
-// 		skipInCreate: false,
-// 	},
-// 	contentType: {
-// 		defaultValue: "",
-// 		skipInCreate: false,
-// 	},
-// 	endpoint: {
-// 		autoSaveFromRequest: true,
-// 		skipListInCreate: false,
-// 		list: [],
-// 	},
-// 	header: {
-// 		defaultValue: "",
-// 		skipInCreate: false,
-// 	},
-// 	name: {
-// 		autoGenerate: false,
-// 		skipInCreate: false,
-// 	},
-// 	response: {
-// 		viewInEditor: false,
-// 		requireKeypressOnPrint: false,
-// 	},
-// 	url: {
-// 		autoSaveFromRequest: true,
-// 		skipListInCreate: false,
-// 		list: [],
-// 	},
-// },
