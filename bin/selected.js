@@ -7,6 +7,7 @@ import {
 	Separator
 } from '@inquirer/prompts';
 import chalk from 'chalk';
+import ora from 'ora';
 
 class SelectedRequest {
 
@@ -16,6 +17,9 @@ class SelectedRequest {
 	}
 
 	async run(request) {
+		const loading = ora('Fetching data').start();
+		loading.color = 'yellow';
+
 		const reqHeaders = new Headers(request.headers ? request.headers : {});
 		reqHeaders.append('Content-Type', request.contentType);
 		reqHeaders.append('Authorization', `Bearer ${this.state.data.accessToken}`)
@@ -25,14 +29,29 @@ class SelectedRequest {
 			headers: reqHeaders,
 			body: request.body,
 		});
-		this.ui.setTitle(`Response from: ${request.url}`);
-		console.log(response);
-		this.ui.setFooter();
 
-		response = await response.json();
-		this.ui.setTitle(`Response JSON`);
-		console.log(response);
-		this.ui.setFooter();
+		await new Promise(resolve => {
+			setTimeout(async () => {
+				loading.text = 'Parsing data';
+
+				let data = await response.json();
+
+				setTimeout(() => {
+					loading.color = 'green';
+					loading.succeed('Printing response');
+
+					this.ui.setTitle(`Response from: ${request.url}`);
+					console.log(response);
+					this.ui.setFooter();
+
+					this.ui.setTitle(`Response JSON`);
+					console.log(data);
+					this.ui.setFooter();
+
+					resolve(true);
+				}, 500);
+			}, 500);
+		});
 	}
 
 	async edit(request) {
@@ -52,7 +71,7 @@ class SelectedRequest {
 						value: 'Save changes',
 						description: this.ui.dim('\nSave changes and return to previous menu'),
 					},
-					new Separator(),
+					new Separator(chalk.gray('--------------------------------------------------')),
 					{
 						value: 'Name',
 						description: this.ui.dim('\nEdit the name of this request'),
@@ -77,7 +96,7 @@ class SelectedRequest {
 						value: 'Body',
 						description: this.ui.dim('\nEdit the body of this request'),
 					},
-					new Separator(),
+					new Separator(chalk.gray('--------------------------------------------------')),
 					{
 						value: 'Go back',
 						description: this.ui.dim('\nReturn to previous menu'),
@@ -149,7 +168,7 @@ class SelectedRequest {
 						value: deleteReq,
 						description: this.ui.dim('\nDelete this HTTP request'),
 					},
-					new Separator(),
+					new Separator(chalk.gray('--------------------------------------------------')),
 					{
 						value: 'Go back',
 						description: this.ui.dim('\nReturn to previous menu'),

@@ -10,13 +10,16 @@ import {
 	select,
 	Separator
 } from '@inquirer/prompts';
-import State from './state.js';
-import SelectedRequest from './selected.js';
-import UI from './ui.js';
 import chalk from 'chalk';
+
+import UI from './ui.js';
+import State from './state.js';
+import Settings from './settings.js';
+import SelectedRequest from './selected.js';
 
 const ui = new UI();
 const state = new State(ui);
+const settings = new Settings(state, ui);
 const selectedRequest = new SelectedRequest(state, ui);
 // const argv = yargs(hideBin(process.argv)).parse()
 // console.log(argv);
@@ -30,7 +33,6 @@ const mainMenu = async () => {
 	const menuItems = state.init();
 	const quit = chalk.red('Quit');
 
-	// menuItems.unshift(new Separator(chalk.gray('---   REQUESTS   ---')));
 	menuItems.unshift(new Separator(chalk.gray('--------------------------------------------------')));
 	menuItems.unshift({
 		value: quit,
@@ -49,8 +51,6 @@ const mainMenu = async () => {
 		value: 'New request',
 		description: ui.dim('\nBuild a new HTTP request')
 	});
-	// menuItems.unshift(new Separator(chalk.gray('____________________')));
-	// menuItems.push(new Separator(chalk.gray('____________________')));
 
 	const selected = await select({
 		type: 'multiselect',
@@ -63,10 +63,8 @@ const mainMenu = async () => {
 	if (selected === 'New request' || selected === 'No requests found! Create a new request') {
 		await state.createNewRequest();
 		return false;
-	} else if (selected === 'View saved data') {
-		ui.setTitle('Your saved data');
-		console.log(state.data);
-		ui.setFooter();
+	} else if (selected === 'Settings') {
+		await settings.options();
 		return false;
 	} else if (selected === quit) {
 		return true;
