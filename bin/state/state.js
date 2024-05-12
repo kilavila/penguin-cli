@@ -2,7 +2,6 @@ import Conf from 'conf';
 import Builder from './builder.js';
 
 class State {
-
 	constructor(ui) {
 		this.db = new Conf({ projectName: 'pui' });
 		this.builder = new Builder();
@@ -14,7 +13,7 @@ class State {
 				global: {
 					confirmOnDelete: false,
 					confirmOnExit: false,
-					confirmUnsavedChanges: false,
+					confirmUnsavedChanges: false, // FIX: Remove and always save on changes
 				},
 				accessToken: {
 					autoSaveFromRequest: true,
@@ -27,8 +26,8 @@ class State {
 					skipInCreate: false,
 				},
 				contentType: {
-					defaultValue: "",
-					skipInCreate: false,
+					defaultValue: "application/json",
+					skipInCreate: true,
 				},
 				endpoint: {
 					autoSaveFromRequest: true,
@@ -37,9 +36,9 @@ class State {
 				},
 				header: {
 					defaultValue: "",
-					skipInCreate: false,
+					skipInCreate: true,
 				},
-				name: {
+				name: { // FIX: Add name last in builder to auto generate name
 					autoGenerate: false,
 					skipInCreate: false,
 				},
@@ -115,6 +114,7 @@ class State {
 		return request;
 	}
 
+	// TODO: Add function to clear all data
 }
 
 export default State;

@@ -17,12 +17,17 @@ class SelectedRequest {
 	}
 
 	async run(req) {
+		let accessToken = this.state.data.settings.accessToken;
+
 		const loading = ora('Fetching data').start();
 		loading.color = 'yellow';
 
 		const headers = new Headers(req.headers ? req.headers : {});
 		headers.append('Content-Type', req.contentType);
-		headers.append('Authorization', `Bearer ${this.state.data.accessToken}`)
+
+		if (accessToken.autoAddInRequest && accessToken.value) {
+			headers.append('Authorization', `Bearer ${accessToken.value}`)
+		}
 
 		let res = await fetch(req.url, {
 			method: req.method,
@@ -31,8 +36,13 @@ class SelectedRequest {
 		});
 
 		let data = await res.json();
-		loading.succeed('Printing response');
 
+		if (accessToken.autoSaveFromRequest && data.accessToken) {
+			this.state.data.settings.accessToken.value = data.accessToken;
+			await this.state.save();
+		}
+
+		loading.succeed('Printing response');
 		this.ui.setTitle(
 			chalk.yellow(res.status) + ': ' +
 			chalk.green(res.statusText) +
@@ -187,7 +197,20 @@ class SelectedRequest {
 					await this.state.editRequest(request.id, result.editedRequest);
 				}
 			} else if (action === deleteReq) {
-				await this.state.deleteRequest(request.id);
+				const global = this.state.data.settings.global;
+
+				if (global.confirmOnDelete) {
+					const confirmation = await confirm({
+						message: chalk.red(`Delete request: ${request.name}?`),
+						default: false,
+					});
+
+					if (confirmation) {
+						await this.state.deleteRequest(request.id);
+					}
+				} else {
+					await this.state.deleteRequest(request.id);
+				}
 				return;
 			} else {
 				action = 'Go back';

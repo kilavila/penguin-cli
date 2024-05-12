@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// FIX: Update local files imports!
+
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import ora from 'ora';
@@ -21,9 +23,12 @@ const ui = new UI();
 const state = new State(ui);
 const settings = new Settings(state, ui);
 const selectedRequest = new SelectedRequest(state, ui);
+
+// TODO: Make function for args
 // const argv = yargs(hideBin(process.argv)).parse()
 // console.log(argv);
 
+// FIX: Change banner and add if hide settings
 ui.printBgMagenta(ui.welcomeBanner);
 
 // FIX: ?? Create collections/projects?
